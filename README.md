@@ -23,7 +23,7 @@ Sevenux aims to provide a clean, responsive and enjoyable card game experience d
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/sevenux.git
+git clone https://github.com/FrancoisBasset/sevenux.git
 cd sevenux
 ```
 
