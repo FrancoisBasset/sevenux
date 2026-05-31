@@ -1,1 +1,6 @@
 __pycache__
+poetry.lock
+src/sevenux/__pycache__
+dist
+pkg
+*.zst

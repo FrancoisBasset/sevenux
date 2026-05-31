@@ -15,3 +15,6 @@ class Card:
 
     def is_plus_joker(self):
         return self.value.startswith('+')
+    
+    def is_x2(self):
+        return self.value == 'x2'

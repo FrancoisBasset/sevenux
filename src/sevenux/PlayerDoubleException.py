@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from player import Player
+    from sevenux.player import Player
 
 class PlayerDoubleException(Exception):
     def __init__(self, _player: Player, with_second_chance: bool):

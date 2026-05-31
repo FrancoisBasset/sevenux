@@ -1,10 +1,10 @@
-from game import Game
-from game_actions import GameActions
+from sevenux.game import Game
+from sevenux.game_actions import GameActions
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from sevenuxui import SevenuxUI
+    from sevenux.sevenuxui import SevenuxUI
 
 class GameController:
     ui: SevenuxUI = None
@@ -15,7 +15,7 @@ class GameController:
         self.game = Game()
         self.game.set_game_controller(self)
 
-    def ui_action(self, action: str):
+    def ui_action(self, action: str, data: any = None) -> any:
         if action == GameActions.DECIDE_DRAW:
             return self.ui.decide_draw()
         elif action == GameActions.DECIDE_STOP:
@@ -24,9 +24,13 @@ class GameController:
             return self.ui.decide_draw3(self.game.bots_to_choose)
         elif action == GameActions.DECIDE_SECONDCHANCE:
             return self.ui.decide_second_chance(self.game.bots_to_choose)
+        elif action == GameActions.PRINT_MESSAGE:
+            return self.ui.print_message(data)
 
         return None
 
     def execute_action(self, action: str):
         if action == GameActions.NEXT_TURN:
-            self.game.next_turn()
+            return self.game.next_turn()
+        elif action == GameActions.COUNT_SCORES:
+            self.game.count_scores()
