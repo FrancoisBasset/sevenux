@@ -10,6 +10,7 @@ class Player:
         self.jokers: list[Card] = []
         self.x2: bool = False
         self.is_stopped: bool = False
+        self.is_knocked_out: bool = False
         self.total_points = 0
 
     def add_card(self, card: Card):
@@ -21,25 +22,35 @@ class Player:
             self.x2 = True
         elif card.is_stop():
             self.is_stopped = True
+            self.is_knocked_out = False
         else:
             self._check_for_double(card)
             self.cards.append(card)
 
     def stop(self):
         self.is_stopped = True
+        self.is_knocked_out = False
+
+    def reset_for_round(self):
+        self.cards = []
+        self.second_chance = False
+        self.jokers = []
+        self.x2 = False
+        self.is_stopped = False
+        self.is_knocked_out = False
 
     def _check_for_double(self, card: Card):
         has_double: bool = any(existing.value == card.value for existing in self.cards)
 
         if has_double:
-            if self.second_chance:
+            had_second_chance = self.second_chance
+            if had_second_chance:
                 self.second_chance = False
             else:
-                self.cards = []
-                self.jokers = []
                 self.is_stopped = True
+                self.is_knocked_out = True
             
-            raise PlayerDoubleException(self, self.second_chance)
+            raise PlayerDoubleException(self, had_second_chance)
 
     def has_second_chance(self):
         return self.second_chance
@@ -103,6 +114,9 @@ class Player:
 
     @property
     def current_points(self) -> int:
+        if self.is_knocked_out:
+            return 0
+
         current_points = 0
 
         for card in self.cards:

@@ -2,13 +2,12 @@ from random import shuffle
 from sevenux.card import Card
 
 class Deck:
-    cards: list[Card] = []
-
     def __init__(self):
+        self.cards: list[Card] = []
         self._create_new_deck()
 
     def _create_new_deck(self):
-        values: list[str] = ['0', '+2', '+4', '+6', '+8', '+10', 'x2', 'stop', 'stop', 'stop', 'draw3', 'draw3', 'draw3', 'secondchance', 'secondchance', 'secondchance'];
+        values: list[str] = ['0', '+2', '+4', '+6', '+8', '+10', 'x2', 'stop', 'stop', 'stop', 'draw3', 'draw3', 'draw3', 'secondchance', 'secondchance', 'secondchance']
         self.cards.extend([Card(value) for value in values])
 
         for i in range(1, 13):

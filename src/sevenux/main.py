@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-from sevenux.sevenuxui import SevenuxUI
+from sevenux.ui.sevenux_app import SevenuxApp
 
 def main():
-    ui: SevenuxUI = SevenuxUI()
-    ui.start()
+    app = SevenuxApp()
+    app.run()
 
 if __name__ == '__main__':
     main()

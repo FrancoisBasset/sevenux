@@ -8,6 +8,7 @@ from sevenux.game_controller import GameController
 from sevenux.player import Player
 
 class SevenuxUI:
+    TARGET_SCORE = 200
     game_controller: GameController = None
 
     def __init__(self):
@@ -22,17 +23,29 @@ class SevenuxUI:
         self.game_controller.game.add_bot(Bot('Benazir'))
 
     def start(self):
-        while not self.game_controller.game.deck.is_empty() and len(self.game_controller.game.players_in_game) > 0:
-            played: bool = self.game_controller.execute_action(GameActions.NEXT_TURN)
-            if not played:
-                continue
+        round_number = 1
+        while max(player.total_points for player in self.game_controller.game.players) < self.TARGET_SCORE:
+            self.print_message(f"Manche {round_number}\n")
+            while not self.game_controller.game.deck.is_empty() and len(self.game_controller.game.players_in_game) > 0:
+                played: bool = self.game_controller.execute_action(GameActions.NEXT_TURN)
+                if not played:
+                    continue
 
-            self.show()
+                self.show()
 
-            time.sleep(1)
+                time.sleep(1)
 
-        self.game_controller.execute_action(GameActions.COUNT_SCORES)
-        self.show_scores()
+            self.game_controller.execute_action(GameActions.COUNT_SCORES)
+            self.show_scores()
+
+            if max(player.total_points for player in self.game_controller.game.players) >= self.TARGET_SCORE:
+                break
+
+            round_number += 1
+            self.game_controller.game.start_new_round()
+
+        winner = max(self.game_controller.game.players, key=lambda player: player.total_points)
+        self.print_message(f"Vainqueur : {winner.name} avec {winner.total_points} points")
 
     def decide_draw(self) -> bool:
         self.print_message('Piocher ? y/n')

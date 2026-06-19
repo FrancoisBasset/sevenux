@@ -11,14 +11,12 @@ if TYPE_CHECKING:
     from sevenux.game_controller import GameController
 
 class Game:
-    deck: Deck = None
-    player: Player = None
-    bots: list[Bot] = []
-    turn: int = 0
-    game_controller: GameController = None
-
     def __init__(self):
-        self.deck = Deck()
+        self.deck: Deck = Deck()
+        self.player: Player | None = None
+        self.bots: list[Bot] = []
+        self.turn: int = -1
+        self.game_controller: GameController | None = None
 
     def set_player(self, player: Player):
         self.player = player
@@ -29,8 +27,16 @@ class Game:
     def set_game_controller(self, game_controller: GameController):
         self.game_controller = game_controller
 
+    def start_new_round(self):
+        self.deck = Deck()
+        self.turn = -1
+        for player in self.players:
+            player.reset_for_round()
+
     @property
     def players(self) -> list[Player|Bot]:
+        if self.player is None:
+            return [*self.bots]
         return [self.player, *self.bots]
     
     @property
@@ -55,6 +61,7 @@ class Game:
 
         draw: bool = self._decide_draw(player)
         if not draw:
+            self.game_controller.ui_action(GameActions.PRINT_MESSAGE, player.name + ' decide de s\'arrêter')
             player.stop()
             return True
 
@@ -99,7 +106,7 @@ class Game:
         self.game_controller.ui_action(GameActions.PRINT_MESSAGE, target.name + ' doit arrêter de jouer')
 
     def _decide_draw3(self, player: Player|Bot):
-        if len(self.players_in_game) == 0:
+        if len(self.bots_to_choose) == 0:
             target: Player = player
         elif not player.is_bot:
             choice = self.game_controller.ui_action(GameActions.DECIDE_DRAW3)
@@ -111,7 +118,7 @@ class Game:
         else:
             target: Player = player.decide_draw3(self.players)
 
-        text += '[' + player.name + ' ' + ' '.join(card.value for card in player.cards) + '] ' + target.name + ' doit piocher 3 cartes'
+        text = '[' + player.name + ' ' + ' '.join(card.value for card in player.cards) + '] ' + target.name + ' doit piocher 3 cartes'
         self.game_controller.ui_action(GameActions.PRINT_MESSAGE, text)
         self.draw_card(target)
         self.draw_card(target)
